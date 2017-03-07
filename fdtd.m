@@ -5,14 +5,15 @@ constants; % Loads constants
 
 %% Problem definition.
 x = (0:0.05:10)';
-finalTime = 100e-9;
+finalTime = 60e-9;
 
 % Materials.
 
 % Boundary conditions.
 
 % Sources.
-excPoint = floor(length(x)/2);
+excPoint = floor(length(x)/4);
+scaPoint = floor(length(x)*3/4);
 delay = 8e-9;
 spread = 2e-9;
 
@@ -44,7 +45,7 @@ dt = cfl*dx/c0;
 cE = dt/eps0/dx;
 cH = dt/mu0/dx;
 
-mur = zeros(2,1);
+% abc = zeros(2,1);
 
 %% Performs time integration.
 tic;
@@ -53,26 +54,33 @@ for t=0:dt:finalTime
     for i=2:(cells-1)
         ez(i,2)=ez(i,1)+cE*(hy(i-1,1)-hy(i,1));
     end
-%     ez(2:end-1,2) = ez(2:end-1,1) + cE.* (hy(1:end-2,1)-hy(2:end-1,1));
     
     % --- Sources ---
 %     ez(excPoint,2) = ez(excPoint,2) + exp(- 0.5*((t-delay)/spread)^2);
+%     
+%     phaseShift = (x(scaPoint) - x(excPoint)) / c0;
+%     ez(scaPoint,2) = ez(scaPoint,2) - ...
+%         exp(- 0.5*((t-delay-phaseShift)/spread)^2);
     
     % --- Boundary conditions ---
 %     ez(    1, 2) = 0;
 %     ez(cells, 2) = 0; % PEC
 %     ez(1,2)    =ez(    1,1) - 2*cE*hy(      1,1);
 %     ez(cells,2)=ez(cells,1) + 2*cE*hy(cells-1,1); % PMC
-    ez(1,2) = mur(1);
-    mur(1)  = ez(2,2);
-    ez(cells,2) = mur(2);
-    mur(2)  = ez(cells-1,2);
+    ez(1,2) = ez(2,1) + ...
+        (c0*dt-dx)/(c0*dt+dx)*(ez(2,2) - ez(1,1)); % MUR
+    ez(cells,2) = ez(cells-1,1) + ...
+        (c0*dt-dx)/(c0*dt+dx)*(ez(cells,2) - ez(cells-1,1)); % MUR
     
     % --- Updates H field ---
     for i=1:cells-1
         hy(i,2)=hy(i,1)+cH*(ez(i,2)-ez(i+1,2));
     end
-%     hy(1:(end-1),2) = hy(1:(end-1),2) + cH.* (ez(1:(end-1),2) - ez(2:end,2));
+
+%     hy(excPoint,2) = hy(excPoint,2) + ...
+%         exp(- 0.5*((t+dt/2-delay)/spread)^2)/eta0;
+%     hy(scaPoint,2) = hy(scaPoint,2) - ...
+%         exp(- 0.5*((t+dt/2-delay-phaseShift)/spread)^2)/eta0;
 
     ez(:,1)=ez(:,2);
     hy(:,1)=hy(:,2);
@@ -89,7 +97,7 @@ for t=0:dt:finalTime
     plot(hy(:,2));
     hold on;
     axis([0 cells -0.005 0.005]);
-%     pause(.01);
+    pause(.0025);
     drawnow;
 end
 toc;
