@@ -20,7 +20,7 @@ spread = 2e-9;
 % Output requests.
 
 % Initial fields.
-initialEz = exp(- (x-5).^2);
+initialEz = exp(- (x-5).^2/0.005);
 
 %% Inits spatial semi-discretization.
 cells = size(x,1);
@@ -63,14 +63,14 @@ for t=0:dt:finalTime
 %         exp(- 0.5*((t-delay-phaseShift)/spread)^2);
     
     % --- Boundary conditions ---
-%     ez(    1, 2) = 0;
-%     ez(cells, 2) = 0; % PEC
+    ez(    1, 2) = 0;
+    ez(cells, 2) = 0; % PEC
 %     ez(1,2)    =ez(    1,1) - 2*cE*hy(      1,1);
 %     ez(cells,2)=ez(cells,1) + 2*cE*hy(cells-1,1); % PMC
-    ez(1,2) = ez(2,1) + ...
-        (c0*dt-dx)/(c0*dt+dx)*(ez(2,2) - ez(1,1)); % MUR
-    ez(cells,2) = ez(cells-1,1) + ...
-        (c0*dt-dx)/(c0*dt+dx)*(ez(cells,2) - ez(cells-1,1)); % MUR
+%     ez(1,2) = ez(2,1) + ...
+%         (c0*dt-dx)/(c0*dt+dx)*(ez(2,2) - ez(1,1));
+%     ez(cells,2) = ez(cells-1,1) + ...
+%         (c0*dt-dx)/(c0*dt+dx)*(ez(cells,2) - ez(cells-1,1)); % MUR
     
     % --- Updates H field ---
     for i=1:cells-1
