@@ -1,4 +1,4 @@
-function [Ey] = analyticalGaussianRight (E0,x0,s,x,t)
+function [Ey] = analyticalGaussianRight (E0,L,s,x,t)
 
 % Tenemos que construir la expresión analítica de la onda que viaja a la 
 % derecha
@@ -12,7 +12,7 @@ constants;
 
 % Solución a tiempo t
 
-Ey=E0*exp(-(-t-((x-x0)/(2*s*c0))).^(2));
+Ey=E0*exp(-(x-(L/2)/sqrt(2)*s).^(2));
 
 
 end
