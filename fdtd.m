@@ -5,7 +5,7 @@ constants; % Loads constants
 
 %% Problem definition.
 x = (0:0.05:10)';
-finalTime = 1000e-9;
+finalTime = 100e-9;
 
 % Materials.
 
@@ -13,19 +13,20 @@ finalTime = 1000e-9;
 
 % Sources.
 excPoint = floor(length(x)/2);
+scaPoint=floor(length(x)*3/4);
 delay = 8e-9;
 spread = 2e-9;
 
 % Output requests.
 
 % Initial fields.
-initialEz = exp(- (x-5).^2);
+initialEz = exp(- (x-1).^2/0.01);
 
 %% Inits spatial semi-discretization.
 cells = size(x,1);
 
-ez=zeros(size(x,1),2);
-hy=zeros(size(x,1),2);
+ez=zeros(cells,2);
+hy=zeros(cells,2);
 if (exist('initialEz','var'))
     ez(:,1) = initialEz(:);
 end
