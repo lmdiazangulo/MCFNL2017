@@ -11,7 +11,7 @@ clear all;
 constants;
 %% ============== Initialization ==========================================
 % -------Simulation general parameters -----------------------------------
-N = 5;           % N    := Degree of polynomials forming the basis.
+N = 8;           % N    := Degree of polynomials forming the basis.
 h = 0.1;     % h    := Spatial resolution. [meters]
 xMin = 0;        % xMin := Left boundary position.  [meters]
 xMax = 1;      % xMax := Right boundary position. [meters]
